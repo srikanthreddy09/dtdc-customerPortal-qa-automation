@@ -1,0 +1,19 @@
+-r https://raw.githubusercontent.com/robotframework/RIDE/master/requirements.txt
+robotframework-ride==2.0b1
+robotframework-seleniumlibrary==5.1.3
+robotframework-appiumlibrary
+robotframework-faker
+#robotframework-autoitlibrary
+wheel
+robotframework-datadriver
+xlrd==1.2.0
+allure-robotframework
+names
+appdirs
+python-dateutil
+openpyxl==2.5.1
+robotframework-DependencyLibrary
+robotframework-requests
+webdriver-manager
+psutil
+wxPython

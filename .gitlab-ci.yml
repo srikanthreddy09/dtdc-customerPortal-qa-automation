@@ -1,0 +1,122 @@
+stages:
+  - pages
+  - test
+
+pages:
+  stage: pages
+  cache:
+    untracked: false
+    policy: pull-push
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"
+  before_script:
+    - mkdir -p public
+  script:
+    - cp -r gitlab-pages/index.html public/index.html
+  artifacts:
+    paths:
+      - "public"
+
+web_beta:
+  stage: test
+  tags:
+    - robot
+  image: python:3.7
+  variables:
+    URL: 'https://beta.leonardo247.com/'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger" && $METHOD == "web_beta"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $METHOD == "web_beta"
+  script:
+    - apt update && apt install build-essential libgtk-3-dev -y
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && apt install ./google-chrome-stable_current_amd64.deb -y
+    - wget https://chromedriver.storage.googleapis.com/100.0.4896.60/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && cp chromedriver /bin/chromedriver && chmod +x /bin/chromedriver
+    - pip install https://extras.wxpython.org/wxPython4/extras/linux/gtk3/debian-10/wxPython-4.1.1-cp37-cp37m-linux_x86_64.whl
+    - pip3 install -r Requirements.txt
+    - python -m compileall Library\.
+    - pip3 install robotframework-pabot
+    - robot --logtitle Web_Tests_Report --nostatusrc --reporttitle Web_Tests_Report --outputdir Reports --variable URL:$URL --variable NORMAL_USER_NAME:kusuma.kasani@qualizeal.com --variable NORMAL_PASSWORD:Kusuma@123 --variable HEADLESS:True KeywordTestcases/Web/*.robot
+    - echo "Finished"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - "Reports"
+  timeout: 10h
+
+web_staging:
+  stage: test
+  tags:
+    - robot
+  image: python:3.7
+  variables:
+    URL: 'https://staging.leonardo247.com/'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger" && $METHOD == "web_staging"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $METHOD == "web_staging"
+  script:
+    - apt update && apt install build-essential libgtk-3-dev -y
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && apt install ./google-chrome-stable_current_amd64.deb -y
+    - wget https://chromedriver.storage.googleapis.com/100.0.4896.60/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && cp chromedriver /bin/chromedriver && chmod +x /bin/chromedriver
+    - pip install https://extras.wxpython.org/wxPython4/extras/linux/gtk3/debian-10/wxPython-4.1.1-cp37-cp37m-linux_x86_64.whl
+    - pip3 install -r Requirements.txt
+    - python -m compileall Library\.
+    - pip3 install robotframework-pabot
+    - robot --logtitle Web_Tests_Report --nostatusrc --reporttitle Web_Tests_Report --outputdir Reports --variable URL:$URL --variable NORMAL_USER_NAME:kusuma.kasani@qualizeal.com --variable NORMAL_PASSWORD:Kusuma@123 --variable HEADLESS:True KeywordTestcases/Web/*.robot
+    - echo "Finished"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - "Reports"
+  timeout: 10h
+
+web_dev:
+  stage: test
+  tags:
+    - robot
+  image: python:3.7
+  variables:
+    URL: 'https://dev.leonardo247.com/'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger" && $METHOD == "web_dev"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $METHOD == "web_dev"
+  script:
+    - apt update && apt install build-essential libgtk-3-dev -y
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && apt install ./google-chrome-stable_current_amd64.deb -y
+    - wget https://chromedriver.storage.googleapis.com/100.0.4896.60/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && cp chromedriver /bin/chromedriver && chmod +x /bin/chromedriver
+    - pip install https://extras.wxpython.org/wxPython4/extras/linux/gtk3/debian-10/wxPython-4.1.1-cp37-cp37m-linux_x86_64.whl
+    - pip3 install -r Requirements.txt
+    - python -m compileall Library\.
+    - pip3 install robotframework-pabot
+    - robot --logtitle Web_Tests_Report --nostatusrc --reporttitle Web_Tests_Report --outputdir Reports --variable URL:$URL --variable NORMAL_USER_NAME:kusuma.kasani@qualizeal.com --variable NORMAL_PASSWORD:Kusuma@123 --variable HEADLESS:True KeywordTestcases/Web/*.robot
+    - echo "Finished"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - "Reports"
+  timeout: 7h
+
+web_prod:
+  stage: test
+  tags:
+    - robot
+  image: python:3.7
+  variables:
+    URL: 'https://leonardo247.com/'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger" && $METHOD == "web_prod"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $METHOD == "web_prod"
+  script:
+    - apt update && apt install build-essential libgtk-3-dev -y
+    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && apt install ./google-chrome-stable_current_amd64.deb -y
+    - wget https://chromedriver.storage.googleapis.com/100.0.4896.60/chromedriver_linux64.zip && unzip chromedriver_linux64.zip && cp chromedriver /bin/chromedriver && chmod +x /bin/chromedriver
+    - pip install https://extras.wxpython.org/wxPython4/extras/linux/gtk3/debian-10/wxPython-4.1.1-cp37-cp37m-linux_x86_64.whl
+    - pip3 install -r Requirements.txt
+    - python -m compileall Library\.
+    - pip3 install robotframework-pabot
+    - robot --logtitle Web_Tests_Report --nostatusrc --reporttitle Web_Tests_Report --outputdir Reports --variable URL:$URL --variable NORMAL_USER_NAME:kusuma.kasani@qualizeal.com --variable NORMAL_PASSWORD:Kusuma@123 --variable HEADLESS:True KeywordTestcases/Web/*.robot
+    - echo "Finished"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - "Reports"
+  timeout: 7h
